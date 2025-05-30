@@ -1,13 +1,4 @@
 ---
-percona_package_deps:
-  - gnupg2
-  - socat
-  - python3
-  - python3-pip
-  - openssl
-  - diffutils
-  - iproute
-
 percona_root_password: 'change_me'
 percona_system_password: 'change_me'
 percona_sst_password: 'change_me'
@@ -28,9 +19,6 @@ percona_certs:
 
 percona_databases: []
 percona_users: []
-
-percona_daemon: mysql
-percona_service: mysql
 
 percona_logrotate:
   configure: true

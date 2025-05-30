@@ -1,4 +1,8 @@
 ---
+# include distribution-specific variables
+- name: Load distro-specific variables
+  include_vars: '{{ ansible_os_family }}.yml'
+
 # these reset tasks is meant for development, thus commented out by design
 # - include_tasks: reset.yml
 

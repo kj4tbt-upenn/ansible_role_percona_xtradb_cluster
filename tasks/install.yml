@@ -1,20 +1,20 @@
 ---
 - name: install | ensure mysql group is set
   group:
-    name: mysql
-    gid: 27
+    name: '{{ percona_mysql_user.name }}'
+    gid: '{{ percona_mysql_user.gid }}'
     system: true
 
 - name: install | ensure mysql user is set
   user:
-    name: mysql
-    uid: 27
+    name: '{{ percona_mysql_user.name }}'
+    uid: '{{ percona_mysql_user.uid }}'
     system: true
-    group: mysql
-    comment: 'MySQL Server'
-    home: /var/lib/mysql
+    group: '{{ percona_mysql_user.name }}'
+    comment: '{{ percona_mysql_user.comment }}'
+    home: '{{ percona_mysql_user.home }}'
     create_home: false
-    shell: /sbin/nologin
+    shell: '{{ percona_mysql_user.shell }}'
 
 - name: install | ensure mysql and certs folder exists
   file:

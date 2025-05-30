@@ -45,6 +45,15 @@ percona_config_dir: /etc/my.cnf.d
 percona_ansible_managed: true
 percona_restart_time: "10"  # in seconds
 
+percona_mysql_user:
+  name: mysql
+  uid: 27
+  gid: 27
+  group: mysql
+  comment: 'MySQL Server'
+  home: /var/lib/mysql
+  shell: /sbin/nologin
+
 mysqld:
   bind_address: '0.0.0.0'
   port: 3306

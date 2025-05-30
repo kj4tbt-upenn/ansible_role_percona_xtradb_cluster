@@ -20,8 +20,8 @@
   file:
     state: directory
     path: "{{ item }}"
-    owner: mysql
-    group: mysql
+    owner: '{{ percona_mysql_user.name }}'
+    group: '{{ percona_mysql_user.name }}'
     mode: '0755'
   loop:
     - /etc/mysql
@@ -51,8 +51,8 @@
       yum:
         name: https://repo.percona.com/yum/percona-release-latest.noarch.rpm
 
-    - name: install | enable pxc 80 repo
-      shell: percona-release setup pxc80 -y
+    - name: install | enable pxc repo
+      shell: "percona-release setup pxc{{ percona_pxc_version | replace('.', '') }} -y"
       when: not arbiter_installed
 
     - name: install | percona xtradb cluster

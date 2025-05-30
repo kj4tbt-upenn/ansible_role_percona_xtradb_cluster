@@ -1,4 +1,6 @@
 ---
+percona_pxc_version: "8.4"
+
 percona_root_password: 'change_me'
 percona_system_password: 'change_me'
 percona_sst_password: 'change_me'

@@ -35,14 +35,6 @@
         name: "{{ percona_package_deps }}"
         update_cache: true
 
-    - name: install | pymysql via pip3
-      pip:
-        executable: pip3
-        name: "{{ item }}"
-      loop:
-        - setuptools
-        - pymysql
-
     - name: install | import RPM GPG key
       rpm_key:
         key: https://www.percona.com/downloads/RPM-GPG-KEY-percona

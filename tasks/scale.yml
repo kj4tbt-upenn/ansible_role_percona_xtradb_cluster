@@ -85,7 +85,7 @@
     # if that fails, the play is stopped
     - name: scale | restart mysql service one by one
       shell: >
-        systemctl restart mysql ; mysql -e 'show databases;' &&
+        systemctl restart {{ percona_service }} ; mysql -e 'show databases;' &&
         sleep {{ percona_restart_time }}
       run_once: true
       delegate_to: "{{ item }}"

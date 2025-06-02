@@ -35,8 +35,8 @@
       file:
         path: "{{ item.path }}"
         state: "{{ item.state }}"
-        owner: mysql
-        group: mysql
+        owner:"{{ percona_mysql_user.name }}"
+        group:"{{ percona_mysql_user.name }}"
         mode: "{{ item.mode }}"
       when: not datadir.stat.exists
       loop:
@@ -57,8 +57,8 @@
         content: ""
         dest: "{{ item.dest }}"
         force: true
-        group: mysql
-        owner: mysql
+        group:"{{ percona_mysql_user.name }}"
+        owner:"{{ percona_mysql_user.name }}"
         mode: "{{ item.mode }}"
       loop:
         - dest: "{{ mysqld.slow_log }}"
@@ -105,7 +105,7 @@
 # if that fails, the play is stopped
 - name: config | restart mysql service one by one
   shell: >
-    command -v mysql && systemctl restart mysql ;
+    command -v mysql && systemctl restart {{ percona_service }} ;
     command -v mysql && mysql -e 'show databases;' && sleep {{ percona_restart_time }}
     || echo
   run_once: true
@@ -126,7 +126,7 @@
 
 - name: config | ensure mysql is started and enabled
   systemd:
-    name: mysql
+    name:"{{ percona_service }}"
     state: started
     enabled: true
   when: not arbiter

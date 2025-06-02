@@ -14,7 +14,7 @@
 
     - name: root | start and enable mysql
       systemd:
-        name: mysql
+        name: "{{ percona_service }}"
         state: started
         enabled: true
 
@@ -49,7 +49,7 @@
         src: root.cnf.j2
         dest: /etc/mysql/root.cnf
         mode: '0660'
-        owner: mysql
+        owner: "{{ percona_mysql_user.name }}"
         group: root
 
     - name: root | symlink /etc/mysql/root.cnf to /root/.my.cnf
@@ -83,7 +83,7 @@
 
     - name: root | stop mysql
       systemd:
-        name: mysql
+        name: "{{ percona_service }}"
         state: stopped
 
     - name: root | remove mysqld log file

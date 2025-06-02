@@ -56,8 +56,8 @@
         src: "{{ percona_certs_tmp_dir }}/{{ item }}.pem"
         dest: "/etc/mysql/certs/{{ item }}.pem"
         mode: '0600'
-        owner: mysql
-        group: mysql
+        owner: "{{ percona_mysql_user.name }}"
+        group: "{{ percona_mysql_user.name }}"
       loop: "{{ percona_certs }}"
 
     - name: certs | ensure files are removed in /var/lib/mysql

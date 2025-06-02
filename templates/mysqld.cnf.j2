@@ -4,7 +4,7 @@
 socket                     = {{ mysqld.socket }}
 
 [mysqld]
-user                       = "{{ percona_mysql_user.name }}"
+user                       = {{ percona_mysql_user.name }}
 port                       = {{ mysqld.port }}
 bind-address               = {{ mysqld.bind_address }}
 socket                     = {{ mysqld.socket }}

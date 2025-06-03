@@ -112,7 +112,7 @@
   delegate_to: "{{ item }}"
   loop: "{{ ansible_play_hosts }}"
   when:
-    - host_count == '1' or item != host_which_is_skipped
+    - percona_host_count == '1' or item != host_which_is_skipped
     - result is undefined or result is not failed
     - (installed is defined and installed) or
       (percona_arbiter_installed is defined and percona_arbiter_installed)

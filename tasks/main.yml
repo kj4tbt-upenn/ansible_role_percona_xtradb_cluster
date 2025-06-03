@@ -19,7 +19,7 @@
   when: not percona_arbiter
 
 - include_tasks: certs.yml
-  when: host_count != '1'
+  when: percona_host_count != '1'
 
 - include_tasks: config.yml
 

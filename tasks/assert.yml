@@ -5,12 +5,12 @@
 
 - name: assert | set amount of hosts in play
   set_fact:
-    host_count: "{{ ansible_play_hosts | length }}"
+    percona_host_count: "{{ ansible_play_hosts | length }}"
 
 - name: assert | ensure that cluster is active with multiple hosts in play
   assert:
     that: percona_cluster.enabled
-  when: host_count != '1'
+  when: percona_host_count != '1'
 
 - name: assert | set fact when percona is installed
   set_fact:
@@ -22,13 +22,13 @@
     percona_arbiter: "{{ percona_cluster.role == 'arbiter' }}"
     percona_arbiter_installed: >-
       {{ 'percona-xtradb-cluster-garbd' in ansible_facts.packages }}
-  when: host_count != '1'
+  when: percona_host_count != '1'
 
 - name: assert | set facts when one host in the play
   set_fact:
     percona_arbiter: false
     percona_arbiter_installed: false
-  when: host_count == '1'
+  when: percona_host_count == '1'
 
 - name: assert | ensure passwords are changed
   assert:

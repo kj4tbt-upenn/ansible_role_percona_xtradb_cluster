@@ -44,7 +44,7 @@
     update_password: always
   changed_when: false
   when:
-    - bootstrapper or host_count == '1'
+    - percona_bootstrapper or host_count == '1'
     - not pmm_configured
   no_log: "{{ percona_no_log }}"
 

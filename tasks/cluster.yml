@@ -75,7 +75,7 @@
           systemd:
             name: '{{ percona_service }}@bootstrap.service'
             state: started
-          when: bootstrapper
+          when: percona_bootstrapper
 
         - name: cluster | create SST user on bootstrapper
           mysql_user:
@@ -85,13 +85,13 @@
             password: "{{ percona_sst_password }}"
             priv: "*.*:grant,reload,lock tables,process,replication client"
           no_log: "{{ percona_no_log }}"
-          when: bootstrapper
+          when: percona_bootstrapper
 
         - name: cluster | start percona on not bootstrapper
           systemd:
             name: "{{ percona_service }}"
             state: started
-          when: not bootstrapper
+          when: not percona_bootstrapper
 
         - name: cluster | pause 3 seconds to let hosts sync
           pause:
@@ -101,7 +101,7 @@
           systemd:
             name: "{{ item.name }}"
             state: "{{ item.state }}"
-          when: bootstrapper
+          when: percona_bootstrapper
           loop:
             - name: '{{ percona_service }}@bootstrap.service'
               state: stopped
@@ -127,7 +127,7 @@
 
     - name: cluster | create test db on bootstrapper - check 2
       shell: mysql -e "CREATE DATABASE percona_test;"
-      when: bootstrapper
+      when: percona_bootstrapper
 
     - name: cluster | pause a second to let hosts sync
       pause:
@@ -153,18 +153,18 @@
     - name: cluster | verify if table is present on bootstrapper
       shell: mysql -e "use percona_test ; show tables;" | grep example
       register: test_two
-      when: bootstrapper
+      when: percona_bootstrapper
 
     - name: cluster | fail when replication failed
       fail:
         msg: "It seems a table could not be replicated. Please check and fix"
       when:
-        - bootstrapper
+        - percona_bootstrapper
         - '"example" not in test_two.stdout'
 
     - name: cluster | drop test database on bootstrapper
       shell: mysql -e "DROP DATABASE percona_test;"
-      when: bootstrapper
+      when: percona_bootstrapper
 
   when:
     - not clustered

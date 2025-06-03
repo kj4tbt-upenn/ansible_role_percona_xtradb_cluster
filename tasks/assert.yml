@@ -18,7 +18,7 @@
 
 - name: assert | set multiple facts when clustering
   set_fact:
-    bootstrapper: "{{ percona_cluster.bootstrapper }}"
+    percona_bootstrapper: "{{ percona_cluster.bootstrapper }}"
     arbiter: "{{ percona_cluster.role == 'arbiter' }}"
     arbiter_installed: >-
       {{ 'percona-xtradb-cluster-garbd' in ansible_facts.packages }}
@@ -41,23 +41,23 @@
 
     - name: assert | create dictionary of bootstrappers
       set_fact:
-        bootstrappers: "{{ dict(keys|zip(values)) }}"
+        percona_bootstrappers: "{{ dict(keys|zip(values)) }}"
       vars:
         keys: "{{ ansible_play_hosts }}"
         values: "{{ ansible_play_hosts|
-                    map('extract', hostvars, ['bootstrapper']) |
+                    map('extract', hostvars, ['percona_bootstrapper']) |
                     list }}"
 
     - name: assert | create list of bootstrappers
       set_fact:
-        bootstrappers_list: "{{ bootstrappers | dict2items |
+        percona_bootstrappers_list: "{{ percona_bootstrappers | dict2items |
                        selectattr('value') |
                        map(attribute='key') |
                        list }}"
 
     - name: assert | that there is exactly one bootstrapper
       assert:
-        that: bootstrappers_list | length == 1
+        that: percona_bootstrappers_list | length == 1
 
   run_once: true
   when: percona_cluster.enabled

@@ -47,8 +47,8 @@
         flat: true
         dest: "{{ percona_certs_tmp_dir }}/"
       when:
-        - bootstrapper is defined
-        - bootstrapper
+        - percona_bootstrapper is defined
+        - percona_bootstrapper
       loop: "{{ percona_certs }}"
 
     - name: certs | copy required files to remaining hosts

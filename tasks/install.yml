@@ -1,27 +1,27 @@
 ---
 - name: install | ensure mysql group is set
   group:
-    name: mysql
-    gid: 27
+    name: '{{ percona_mysql_user.name }}'
+    gid: '{{ percona_mysql_user.gid }}'
     system: true
 
 - name: install | ensure mysql user is set
   user:
-    name: mysql
-    uid: 27
+    name: '{{ percona_mysql_user.name }}'
+    uid: '{{ percona_mysql_user.uid }}'
     system: true
-    group: mysql
-    comment: 'MySQL Server'
-    home: /var/lib/mysql
+    group: '{{ percona_mysql_user.name }}'
+    comment: '{{ percona_mysql_user.comment }}'
+    home: '{{ percona_mysql_user.home }}'
     create_home: false
-    shell: /sbin/nologin
+    shell: '{{ percona_mysql_user.shell }}'
 
 - name: install | ensure mysql and certs folder exists
   file:
     state: directory
     path: "{{ item }}"
-    owner: mysql
-    group: mysql
+    owner: '{{ percona_mysql_user.name }}'
+    group: '{{ percona_mysql_user.name }}'
     mode: '0755'
   loop:
     - /etc/mysql
@@ -35,14 +35,6 @@
         name: "{{ percona_package_deps }}"
         update_cache: true
 
-    - name: install | pymysql via pip3
-      pip:
-        executable: pip3
-        name: "{{ item }}"
-      loop:
-        - setuptools
-        - pymysql
-
     - name: install | import RPM GPG key
       rpm_key:
         key: https://www.percona.com/downloads/RPM-GPG-KEY-percona
@@ -51,20 +43,20 @@
       yum:
         name: https://repo.percona.com/yum/percona-release-latest.noarch.rpm
 
-    - name: install | enable pxc 80 repo
-      shell: percona-release setup pxc80 -y
-      when: not arbiter_installed
+    - name: install | enable pxc repo
+      shell: "percona-release setup pxc{{ percona_pxc_version | replace('.', '') }} -y"
+      when: not percona_arbiter_installed
 
     - name: install | percona xtradb cluster
       dnf:
         name: percona-xtradb-cluster
-      when: not arbiter
+      when: not percona_arbiter
 
   when:
     - installed is defined
     - not installed
-    - arbiter_installed is defined
-    - not arbiter_installed
+    - percona_arbiter_installed is defined
+    - not percona_arbiter_installed
 
 - name: install | ensure mysql.service.d in systemd directory exists
   file:
@@ -73,7 +65,7 @@
     owner: root
     group: root
     mode: 0755
-  when: not arbiter
+  when: not percona_arbiter
 
 - name: install | template mysql override file
   template:
@@ -82,7 +74,7 @@
     owner: root
     group: root
     mode: 0644
-  when: not arbiter
+  when: not percona_arbiter
   register: override_mysql
 
 - name: install | reload daemons when a service file changed

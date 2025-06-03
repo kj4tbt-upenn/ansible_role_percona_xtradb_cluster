@@ -12,5 +12,5 @@
     update_password: always
   loop: "{{ percona_users }}"
   changed_when: false
-  when: (bootstrapper is defined and bootstrapper) or host_count == '1'
+  when: (percona_bootstrapper is defined and percona_bootstrapper) or percona_host_count == '1'
   no_log: "{{ percona_no_log }}"

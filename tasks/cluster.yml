@@ -3,13 +3,13 @@
   shell: mysql -e "show status like 'wsrep%';"
   changed_when: false
   register: cluster
-  when: not arbiter
+  when: not percona_arbiter
 
 - name: cluster | set fact for arbiter
   set_fact:
     cluster:
       stdout: something
-  when: arbiter
+  when: percona_arbiter
 
 - name: cluster | set fact when host is clustered
   set_fact:
@@ -52,7 +52,7 @@
 
         - name: cluster | ensure mysql is stopped
           systemd:
-            name: mysql
+            name: "{{ percona_service }}"
             state: stopped
 
         - name: cluster | ensure galera.cnf is set
@@ -73,25 +73,25 @@
 
         - name: cluster | bootstrap percona on bootstrapper
           systemd:
-            name: 'mysql@bootstrap.service'
+            name: '{{ percona_service }}@bootstrap.service'
             state: started
-          when: bootstrapper
+          when: percona_bootstrapper
 
         - name: cluster | create SST user on bootstrapper
           mysql_user:
             login_unix_socket: /var/run/mysqld/mysqld.sock
             login_host: ''
-            user: sst
+            user: "{{ percona_sst_user }}"
             password: "{{ percona_sst_password }}"
             priv: "*.*:grant,reload,lock tables,process,replication client"
           no_log: "{{ percona_no_log }}"
-          when: bootstrapper
+          when: percona_bootstrapper
 
         - name: cluster | start percona on not bootstrapper
           systemd:
-            name: mysql
+            name: "{{ percona_service }}"
             state: started
-          when: not bootstrapper
+          when: not percona_bootstrapper
 
         - name: cluster | pause 3 seconds to let hosts sync
           pause:
@@ -101,11 +101,11 @@
           systemd:
             name: "{{ item.name }}"
             state: "{{ item.state }}"
-          when: bootstrapper
+          when: percona_bootstrapper
           loop:
-            - name: 'mysql@bootstrap.service'
+            - name: '{{ percona_service }}@bootstrap.service'
               state: stopped
-            - name: mysql
+            - name: '{{ percona_service }}'
               state: started
 
         - name: cluster | pause 5 seconds to let hosts sync
@@ -123,11 +123,11 @@
             msg: "Bootstrapping has failed. Please check the logs, and fix"
           when: '"Synced" not in wsrep_check_one.stdout'
 
-      when: not arbiter
+      when: not percona_arbiter
 
     - name: cluster | create test db on bootstrapper - check 2
       shell: mysql -e "CREATE DATABASE percona_test;"
-      when: bootstrapper
+      when: percona_bootstrapper
 
     - name: cluster | pause a second to let hosts sync
       pause:
@@ -153,18 +153,18 @@
     - name: cluster | verify if table is present on bootstrapper
       shell: mysql -e "use percona_test ; show tables;" | grep example
       register: test_two
-      when: bootstrapper
+      when: percona_bootstrapper
 
     - name: cluster | fail when replication failed
       fail:
         msg: "It seems a table could not be replicated. Please check and fix"
       when:
-        - bootstrapper
+        - percona_bootstrapper
         - '"example" not in test_two.stdout'
 
     - name: cluster | drop test database on bootstrapper
       shell: mysql -e "DROP DATABASE percona_test;"
-      when: bootstrapper
+      when: percona_bootstrapper
 
   when:
     - not clustered

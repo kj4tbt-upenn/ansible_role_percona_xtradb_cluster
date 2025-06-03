@@ -45,7 +45,7 @@
     mode: 0644
   register: override_garbd
 
-- name: arbiter | reload deamons when garbd service file changed
+- name: arbiter | reload daemons when garbd service file changed
   systemd:
     daemon_reload: true
   when: override_garbd.changed

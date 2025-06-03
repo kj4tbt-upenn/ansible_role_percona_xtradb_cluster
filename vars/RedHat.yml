@@ -1,0 +1,14 @@
+---
+percona_package_deps:
+  - gnupg2
+  - socat
+  - python3
+  - python3-pip
+  - python3-pymysql
+  - python3-setuptools
+  - openssl
+  - diffutils
+  - iproute
+
+percona_daemon: mysql
+percona_service: mysql

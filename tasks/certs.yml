@@ -47,8 +47,8 @@
         flat: true
         dest: "{{ percona_certs_tmp_dir }}/"
       when:
-        - bootstrapper is defined
-        - bootstrapper
+        - percona_bootstrapper is defined
+        - percona_bootstrapper
       loop: "{{ percona_certs }}"
 
     - name: certs | copy required files to remaining hosts
@@ -56,8 +56,8 @@
         src: "{{ percona_certs_tmp_dir }}/{{ item }}.pem"
         dest: "/etc/mysql/certs/{{ item }}.pem"
         mode: '0600'
-        owner: mysql
-        group: mysql
+        owner: "{{ percona_mysql_user.name }}"
+        group: "{{ percona_mysql_user.name }}"
       loop: "{{ percona_certs }}"
 
     - name: certs | ensure files are removed in /var/lib/mysql
@@ -66,7 +66,7 @@
         path: "/var/lib/mysql/{{ item }}.pem"
       loop: "{{ percona_certs }}"
       when:
-        - not arbiter
+        - not percona_arbiter
         - not ca_check
 
     - name: certs | ensure files are symlinked
@@ -76,7 +76,7 @@
         dest: "/var/lib/mysql/{{ item }}.pem"
       loop: "{{ percona_certs }}"
       when:
-        - not arbiter
+        - not percona_arbiter
         - not ca_check
 
   no_log: "{{ percona_no_log }}"

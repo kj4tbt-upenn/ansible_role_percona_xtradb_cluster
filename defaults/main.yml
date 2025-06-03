@@ -1,16 +1,10 @@
 ---
-percona_package_deps:
-  - gnupg2
-  - socat
-  - python3
-  - python3-pip
-  - openssl
-  - diffutils
-  - iproute
+percona_pxc_version: "8.4"
 
 percona_root_password: 'change_me'
 percona_system_password: 'change_me'
 percona_sst_password: 'change_me'
+percona_sst_user: sst
 
 # for debugging purposes, one can set this to false
 percona_no_log: true
@@ -29,9 +23,6 @@ percona_certs:
 percona_databases: []
 percona_users: []
 
-percona_daemon: mysql
-percona_service: mysql
-
 percona_logrotate:
   configure: true
   rotate: 3
@@ -44,6 +35,15 @@ percona_config_dir: /etc/my.cnf.d
 # this is to keep the cluster in a stable state
 percona_ansible_managed: true
 percona_restart_time: "10"  # in seconds
+
+percona_mysql_user:
+  name: mysql
+  uid: 27
+  gid: 27
+  group: mysql
+  comment: 'MySQL Server'
+  home: /var/lib/mysql
+  shell: /sbin/nologin
 
 mysqld:
   bind_address: '0.0.0.0'

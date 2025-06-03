@@ -44,7 +44,7 @@
     update_password: always
   changed_when: false
   when:
-    - bootstrapper or host_count == '1'
+    - percona_bootstrapper or percona_host_count == '1'
     - not pmm_configured
   no_log: "{{ percona_no_log }}"
 
@@ -53,7 +53,7 @@
   when: >
      (cluster_scale is defined and cluster_scale) or
      (clustered is defined and not clustered) and
-     (host_count != '1') and
+     (percona_host_count != '1') and
      (pmm_configured)
 
 - name: pmm | add mysql metrics to pmm server for cluster

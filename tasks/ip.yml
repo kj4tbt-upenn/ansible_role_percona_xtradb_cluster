@@ -32,7 +32,7 @@
 
 - name: ip addr | ensure all hosts have the same var when arbiter is present
   set_fact:
-    percona_ip_without_arbiter: "{{ hostvars[run_on]['ip_without_arbiter'] }}"
+    percona_ip_without_arbiter: "{{ hostvars[run_on]['percona_ip_without_arbiter'] }}"
   when: run_on is defined
 
 - name: ip addr | ensure all hosts have the same variable when arbiter is absent

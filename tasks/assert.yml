@@ -19,15 +19,15 @@
 - name: assert | set multiple facts when clustering
   set_fact:
     percona_bootstrapper: "{{ percona_cluster.bootstrapper }}"
-    arbiter: "{{ percona_cluster.role == 'arbiter' }}"
-    arbiter_installed: >-
+    percona_arbiter: "{{ percona_cluster.role == 'arbiter' }}"
+    percona_arbiter_installed: >-
       {{ 'percona-xtradb-cluster-garbd' in ansible_facts.packages }}
   when: host_count != '1'
 
 - name: assert | set facts when one host in the play
   set_fact:
-    arbiter: false
-    arbiter_installed: false
+    percona_arbiter: false
+    percona_arbiter_installed: false
   when: host_count == '1'
 
 - name: assert | ensure passwords are changed

@@ -45,18 +45,18 @@
 
     - name: install | enable pxc repo
       shell: "percona-release setup pxc{{ percona_pxc_version | replace('.', '') }} -y"
-      when: not arbiter_installed
+      when: not percona_arbiter_installed
 
     - name: install | percona xtradb cluster
       dnf:
         name: percona-xtradb-cluster
-      when: not arbiter
+      when: not percona_arbiter
 
   when:
     - installed is defined
     - not installed
-    - arbiter_installed is defined
-    - not arbiter_installed
+    - percona_arbiter_installed is defined
+    - not percona_arbiter_installed
 
 - name: install | ensure mysql.service.d in systemd directory exists
   file:
@@ -65,7 +65,7 @@
     owner: root
     group: root
     mode: 0755
-  when: not arbiter
+  when: not percona_arbiter
 
 - name: install | template mysql override file
   template:
@@ -74,7 +74,7 @@
     owner: root
     group: root
     mode: 0644
-  when: not arbiter
+  when: not percona_arbiter
   register: override_mysql
 
 - name: install | reload daemons when a service file changed

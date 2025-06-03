@@ -67,7 +67,7 @@
           mode: '0700'
       when: not mysql_slow_log.stat.exists
 
-  when: not arbiter
+  when: not percona_arbiter
 
 - block:
     - name: config | create dict of config change
@@ -94,12 +94,12 @@
 - name: config | set fact for arbiter
   set_fact:
     host_which_is_skipped: "{{ inventory_hostname }}"
-  when: arbiter
+  when: percona_arbiter
 
 - name: config | set fact for not arbiters
   set_fact:
     host_which_is_skipped: nope
-  when: not arbiter
+  when: not percona_arbiter
 
 # restart mysql, then verify if we can show databases
 # if that fails, the play is stopped
@@ -115,9 +115,9 @@
     - host_count == '1' or item != host_which_is_skipped
     - result is undefined or result is not failed
     - (installed is defined and installed) or
-      (arbiter_installed is defined and arbiter_installed)
+      (percona_arbiter_installed is defined and percona_arbiter_installed)
     - percona_ansible_managed
-    - not arbiter
+    - not percona_arbiter
     - config_changed
   register: result
 
@@ -129,4 +129,4 @@
     name:"{{ percona_service }}"
     state: started
     enabled: true
-  when: not arbiter
+  when: not percona_arbiter

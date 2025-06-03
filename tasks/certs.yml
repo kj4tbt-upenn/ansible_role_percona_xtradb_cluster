@@ -66,7 +66,7 @@
         path: "/var/lib/mysql/{{ item }}.pem"
       loop: "{{ percona_certs }}"
       when:
-        - not arbiter
+        - not percona_arbiter
         - not ca_check
 
     - name: certs | ensure files are symlinked
@@ -76,7 +76,7 @@
         dest: "/var/lib/mysql/{{ item }}.pem"
       loop: "{{ percona_certs }}"
       when:
-        - not arbiter
+        - not percona_arbiter
         - not ca_check
 
   no_log: "{{ percona_no_log }}"

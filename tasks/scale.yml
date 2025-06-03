@@ -3,13 +3,13 @@
   shell: mysql -e "show status like 'wsrep%';"
   changed_when: false
   register: cluster_state
-  when: not arbiter
+  when: not percona_arbiter
 
 - name: scale | set fact for arbiter
   set_fact:
     cluster_state:
       stdout: wsrep_protocol_version
-  when: arbiter
+  when: percona_arbiter
 
 - name: scale | set fact when in cluster state
   set_fact:
@@ -67,19 +67,19 @@
 
   when:
     - cluster_scale
-    - not arbiter
+    - not percona_arbiter
 
 - block:
 
     - name: scale | set fact for arbiter
       set_fact:
         cluster_host_which_is_skipped: "{{ inventory_hostname }}"
-      when: arbiter
+      when: percona_arbiter
 
     - name: scale | set fact for arbiter
       set_fact:
         cluster_host_which_is_skipped: nope
-      when: not arbiter
+      when: not percona_arbiter
 
     # restart mysql, then verify if we can show databases
     # if that fails, the play is stopped
@@ -94,7 +94,7 @@
         - item != cluster_host_which_is_skipped
         - cluster_result is undefined or cluster_result is not failed
         - (installed is defined and installed) or
-          (arbiter_installed is defined and arbiter_installed)
+          (percona_arbiter_installed is defined and percona_arbiter_installed)
       register: cluster_result
 
     - meta: end_play
@@ -106,7 +106,7 @@
         grep wsrep_local_state_comment
       register: wsrep_check_one
       when:
-        - not arbiter
+        - not percona_arbiter
         - cluster_scale
         - not cluster_status
 
@@ -114,7 +114,7 @@
       fail:
         msg: "Bootstrapping has failed. Please check the logs, and fix"
       when:
-        - not arbiter
+        - not percona_arbiter
         - cluster_scale
         - not cluster_status
         - '"Synced" not in wsrep_check_one.stdout'

@@ -16,7 +16,7 @@
 - include_tasks: install.yml
 
 - include_tasks: root.yml
-  when: not arbiter
+  when: not percona_arbiter
 
 - include_tasks: certs.yml
   when: host_count != '1'
@@ -30,7 +30,7 @@
   when: percona_cluster.enabled
 
 - include_tasks: arbiter.yml
-  when: arbiter
+  when: percona_arbiter
 
 - include_tasks: backup.yml
   when: percona_backup.enabled
@@ -44,4 +44,4 @@
 - include_tasks: pmm.yml
   when:
     - percona_pmm.enabled
-    - not arbiter
+    - not percona_arbiter
